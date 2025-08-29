@@ -1,17 +1,16 @@
 'use client'
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function RegionPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const city = searchParams.get("city"); 
   const weatherApiKey = process.env.NEXT_PUBLIC_WEATHER_API_KEY; 
-
+  
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState("");
   const [aqiIndex, setAqiIndex] = useState(null);
+  const [city, setCity] = useState("");
 
   const epaLevels = {
     1: "Good 😊",
@@ -24,6 +23,7 @@ export default function RegionPage() {
 
   useEffect(() => {
     const loggedInUser = sessionStorage.getItem("IsLoggedIn");
+     const savedCity = localStorage.getItem("SelectedCity");
     if (!loggedInUser) {
       alert("Must be Logged In");
       router.push("/login");
@@ -32,9 +32,18 @@ export default function RegionPage() {
       const names = fullname.split(" ");
       setUser(names[0]);
     }
+
+    if (!savedCity) {
+      alert("No city selected");
+      router.push("/weather");
+      return;
+    }
+
+      setCity(savedCity);
   }, [router]);
 
   useEffect(() => {
+    if (!city) return;
     if (city) {
       setLoading(true);
       fetch(

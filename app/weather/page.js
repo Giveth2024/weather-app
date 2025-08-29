@@ -83,7 +83,8 @@ export default function Weather() {
 
   function handleClick(region)
   {
-    router.push(`/region?city=${region}`)
+    localStorage.setItem("SelectedCity", region);
+    router.push(`/region`)
   }
   
     function logOut(data)
